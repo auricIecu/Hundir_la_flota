@@ -30,7 +30,7 @@ class Tablero:
             return "Disparo fuera del tablero" # Se devuelve la respuesta como una cadena anidada, asi se muestran abajo del tablero
         if casilla in self.disparos_recibidos:  # Cambié a disparos_recibidos
             return "La computadora ya disparó aquí"
-        self.disparos_realizados.append(casilla)
+        self.disparos_recibidos.append(casilla)  # Corregido: usa disparos_recibidos
         if self.grid[fila, columna] == 'O':
             self.grid[fila, columna] = 'X'
             return "¡La computadora ha acertado y comprometido una de tus flotas!"
