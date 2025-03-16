@@ -1,9 +1,13 @@
 import numpy as np
 import random
+import os
+import time
 
 """
 CLASE TABLERO
 """
+
+#Creamos la clase tablero, con un parametro fijo de tamano (10, 10) y le agregamos un metodo crear_tablero
 
 class Tablero:
     def __init__(self, tamano=(10, 10)):
@@ -23,19 +27,17 @@ class Tablero:
         #Proceso disparos recibidos (usado por la computadora contra el jugador)
         fila, columna = casilla
         if fila >= self.tamano[0] or columna >= self.tamano[1]:
-            print("Disparo fuera del tablero")
-            return self
+            return "Disparo fuera del tablero" # Se devuelve la respuesta como una cadena anidada, asi se muestran abajo del tablero
         if casilla in self.disparos_recibidos:  # Cambié a disparos_recibidos
-            print("La computadora ya disparó aquí")
-            return self
-        self.disparos_recibidos.append(casilla)
+            return "La computadora ya disparó aquí"
+        self.disparos_realizados.append(casilla)
         if self.grid[fila, columna] == 'O':
-            print("¡La computadora ha acertado y comprometido una de tus flotas!")
             self.grid[fila, columna] = 'X'
+            return "¡La computadora ha acertado y comprometido una de tus flotas!"
         elif self.grid[fila, columna] == '_':
-            print("La computadora ha fallado")
             self.grid[fila, columna] = 'A'
-        return self
+            return "La computadora ha fallado"
+        return ""
     
     def disparar(self, casilla, tablero_enemigo):
         """
@@ -44,18 +46,17 @@ class Tablero:
         """
         fila, columna = casilla
         if casilla in self.disparos_realizados:
-            print("Ya disparaste aquí")
-            return self
+            return "Ya disparaste aquí"
         self.disparos_realizados.append(casilla) # Si llega hasta aqui es porque la casilla no esta en el conjunto de las previas
         if tablero_enemigo.grid[fila, columna] == 'O':
-            print("¡Acertaste!")
             self.tablero_disparos[fila, columna] = 'X'
             tablero_enemigo.grid[fila, columna] = 'X'  # Actualiza el tablero enemigo
+            return "¡Acertaste!"
         else:
-            print("Fallaste")
             self.tablero_disparos[fila, columna] = 'A'
             tablero_enemigo.grid[fila, columna] = 'A'
-        return self
+            return "Has fallado al enemigo"
+        return ""
     
 """
 CLASE BARCO
@@ -96,11 +97,10 @@ class Barco:
                 barco_aleatorio.append(casilla)
             else:  # Se ejecuta si el for termina sin break
                 return barco_aleatorio  # Todas las posiciones estaban libres
-        
+                        
 """
 FUNCIONES INDEPENDIENTES
 """
-
 
 def colocar_flota_aleatoria(tablero, flota):
     for eslora, cantidad in flota:
@@ -109,7 +109,11 @@ def colocar_flota_aleatoria(tablero, flota):
             tablero = barco.colocar_barco(tablero)
     return tablero
 
-def calcular_ganador(tablero_jugador, tablero_computadora):
+# Función para limpiar la consola
+def limpiar_consola():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def calcular_ganador(tablero_jugador, tablero_computadora, nombre_jugador):
     """Calcula los porcentajes de aciertos y determina el ganador"""
     # Aciertos del jugador (contar 'X' en el tablero de la computadora)
     aciertos_jugador = np.sum(tablero_computadora.grid == 'X')
@@ -131,5 +135,3 @@ def calcular_ganador(tablero_jugador, tablero_computadora):
         print("La computadora gana. Su precisión fue mayor.")
     else:
         print("¡Empate! Ambos tuvieron la misma precisión.")
-
-
